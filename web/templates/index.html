@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>钢琴扒谱机</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <header class="hero">
+    <p class="eyebrow">本地调度 · yt-dlp + Aria-AMT / MuScriptor</p>
+    <h1 class="brand">钢琴扒谱机</h1>
+    <p class="tagline">下载或选用本地音频，切换扒谱模型，MIDI 写入 output。</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel" id="download-panel">
+      <h2>① 获取音频</h2>
+      <p class="hint">粘贴 YouTube / Bilibili 等链接，调用本机 yt-dlp 下载为 mp3。</p>
+      <form id="download-form" class="row">
+        <input
+          id="url-input"
+          type="url"
+          name="url"
+          placeholder="https://www.youtube.com/watch?v=… 或 bilibili 链接"
+          required
+          autocomplete="off"
+        />
+        <button type="submit" class="btn primary" id="download-btn">下载</button>
+      </form>
+
+      <div class="divider"><span>或</span></div>
+
+      <label class="dropzone" id="dropzone" for="file-input">
+        <input id="file-input" type="file" accept=".wav,.mp3,.mp4,.flac,.ogg,.m4a,.aac,.webm,audio/*,video/mp4" hidden />
+        <span class="drop-title">拖入本地音频，或点击选择</span>
+        <span class="drop-sub">支持 wav / mp3 / m4a / flac / mp4 …</span>
+      </label>
+    </section>
+
+    <section class="panel" id="files-panel">
+      <div class="panel-head">
+        <h2>② 选择资源与模型</h2>
+        <button type="button" class="btn ghost" id="refresh-files">刷新</button>
+      </div>
+      <p class="hint">来自 musicdata 目录。选中后选择模型开始扒谱。</p>
+      <ul class="file-list" id="file-list"></ul>
+
+      <div class="model-pick" role="radiogroup" aria-label="扒谱模型">
+        <label class="model-card">
+          <input type="radio" name="model" value="aria-amt" checked />
+          <span class="model-card-body">
+            <strong>Aria-AMT</strong>
+            <em>默认 · 纯钢琴专用</em>
+          </span>
+        </label>
+        <label class="model-card">
+          <input type="radio" name="model" value="muscriptor" />
+          <span class="model-card-body">
+            <strong>MuScriptor</strong>
+            <em>备选 · 默认识别 acoustic_piano</em>
+          </span>
+        </label>
+      </div>
+
+      <div class="options" id="aria-options">
+        <label class="check">
+          <input type="checkbox" id="opt-normalize" />
+          音量归一化（弱音段更稳）
+        </label>
+        <label class="check">
+          <input type="checkbox" id="opt-no-silence" />
+          关闭静音过滤（保留轻柔段落）
+        </label>
+        <label class="field-inline">
+          静音阈值 dB
+          <input type="number" id="opt-silence-db" value="45" min="10" max="80" step="1" />
+        </label>
+      </div>
+
+      <div class="options hidden" id="muscriptor-options">
+        <label class="field-inline">
+          规格
+          <select id="opt-muscriptor-size">
+            <option value="small" selected>small（推荐 4GB 显存）</option>
+            <option value="medium">medium</option>
+            <option value="large">large</option>
+          </select>
+        </label>
+        <label class="field-inline grow">
+          乐器约束
+          <input type="text" id="opt-instruments" value="acoustic_piano" />
+        </label>
+      </div>
+
+      <button type="button" class="btn primary wide" id="transcribe-btn" disabled>开始扒谱</button>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="panel-head">
+        <h2>运行日志</h2>
+        <span class="status-pill" id="job-status">待命</span>
+      </div>
+      <pre class="log" id="log-view" aria-live="polite"></pre>
+    </section>
+
+    <section class="panel" id="output-panel">
+      <div class="panel-head">
+        <h2>③ MIDI 输出</h2>
+        <button type="button" class="btn ghost" id="refresh-outputs">刷新</button>
+      </div>
+      <p class="hint">文件保存在项目根目录的 <code>output/</code>。</p>
+      <ul class="file-list" id="output-list"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span id="env-status">检查环境中…</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
