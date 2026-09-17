@@ -6,3 +6,17 @@ dist/
 runtime/
 *.zip
 .venv/
+
+# Local transcription runtime data
+localaria-amt/.venv/
+localaria-amt/__pycache__/
+localaria-amt/**/__pycache__/
+localaria-amt/*.egg-info/
+localaria-amt/**/*.egg-info/
+localaria-amt/checkpoints/
+localaria-amt/input/
+localaria-amt/output/
+localaria-amt/tools/ffmpeg/
+localaria-amt/wheels/
+localmuscriptor/.venv/
+localmuscriptor/__pycache__/

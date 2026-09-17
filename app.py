@@ -25,10 +25,10 @@ ROOT = Path(__file__).resolve().parent
 MUSICDATA = ROOT / "musicdata"
 OUTPUT = ROOT / "output"
 YT_EXE = ROOT / "yt-dlp_win_x86" / "yt.exe"
-ARIA_ROOT = ROOT / "本地aria-amt"
+ARIA_ROOT = ROOT / "localaria-amt"
 ARIA_PYTHON = ARIA_ROOT / ".venv" / "Scripts" / "python.exe"
 ARIA_SCRIPT = ARIA_ROOT / "transcribe_local.py"
-MUSCRIPTOR_ROOT = ROOT / "本地muscriptor"
+MUSCRIPTOR_ROOT = ROOT / "localmuscriptor"
 MUSCRIPTOR_PYTHON = MUSCRIPTOR_ROOT / ".venv" / "Scripts" / "python.exe"
 MUSCRIPTOR_SCRIPT = MUSCRIPTOR_ROOT / "transcribe_local.py"
 
@@ -60,6 +60,7 @@ def _load_dotenv(path: Path) -> None:
 
 
 _load_dotenv(ROOT / ".env")
+YT_PROXY = os.environ.get("YT_PROXY", "http://127.0.0.1:7897").strip()
 
 
 def _hf_token_present() -> bool:
@@ -203,6 +204,9 @@ def _run_download(job: Job, url: str) -> None:
         out_tpl = str(MUSICDATA / "%(title)s.%(ext)s")
         cmd = [
             str(YT_EXE),
+            "--proxy",
+            YT_PROXY,
+            "--no-check-certificates",
             "-x",
             "--audio-format",
             "mp3",
